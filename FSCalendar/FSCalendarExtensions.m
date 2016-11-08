@@ -7,6 +7,7 @@
 //
 
 #import "FSCalendarExtensions.h"
+#import <objc/runtime.h>
 
 @implementation UIView (FSCalendarExtensions)
 
@@ -137,6 +138,89 @@
 
 @end
 
+@interface NSCalendar (FSCalendarExtensionsPrivate)
+
+@property (readonly, nonatomic) NSDateComponents *fs_privateComponents;
+
+@end
+
+@implementation NSCalendar (FSCalendarExtensions)
+
+- (nullable NSDate *)fs_firstDayOfMonth:(NSDate *)month
+{
+    if (!month) return nil;
+    NSDateComponents *components = [self components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitHour fromDate:month];
+    components.day = 1;
+    return [self dateFromComponents:components];
+}
+
+- (nullable NSDate *)fs_lastDayOfMonth:(NSDate *)month
+{
+    if (!month) return nil;
+    NSDateComponents *components = [self components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitHour fromDate:month];
+    components.day = 1;
+    return [self dateFromComponents:components];
+}
+
+- (nullable NSDate *)fs_firstDayOfWeek:(NSDate *)week
+{
+    if (!week) return nil;
+    NSDateComponents *weekdayComponents = [self components:NSCalendarUnitWeekday fromDate:week];
+    NSDateComponents *components = self.fs_privateComponents;
+    components.day = - (weekdayComponents.weekday - self.firstWeekday);
+    components.day = (components.day-7) % 7;
+    NSDate *firstDayOfWeek = [self dateByAddingComponents:components toDate:week options:0];
+    firstDayOfWeek = [self dateBySettingHour:0 minute:0 second:0 ofDate:firstDayOfWeek options:0];
+    components.day = NSIntegerMax;
+    return firstDayOfWeek;
+}
+
+- (nullable NSDate *)fs_lastDayOfWeek:(NSDate *)week
+{
+    if (!week) return nil;
+    NSDateComponents *weekdayComponents = [self components:NSCalendarUnitWeekday fromDate:week];
+    NSDateComponents *components = self.fs_privateComponents;
+    components.day = - (weekdayComponents.weekday - self.firstWeekday);
+    components.day = (components.day-7) % 7 + 6;
+    NSDate *lastDayOfWeek = [self dateByAddingComponents:components toDate:week options:0];
+    lastDayOfWeek = [self dateBySettingHour:0 minute:0 second:0 ofDate:lastDayOfWeek options:0];
+    components.day = NSIntegerMax;
+    return lastDayOfWeek;
+}
+
+- (nullable NSDate *)fs_middleDayOfWeek:(NSDate *)week
+{
+    if (!week) return nil;
+    NSDateComponents *weekdayComponents = [self components:NSCalendarUnitWeekday fromDate:week];
+    NSDateComponents *componentsToSubtract = self.fs_privateComponents;
+    componentsToSubtract.day = - (weekdayComponents.weekday - self.firstWeekday) + 3;
+    NSDate *middleDayOfWeek = [self dateByAddingComponents:componentsToSubtract toDate:week options:0];
+    NSDateComponents *components = [self components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay|NSCalendarUnitHour fromDate:middleDayOfWeek];
+    middleDayOfWeek = [self dateFromComponents:components];
+    componentsToSubtract.day = NSIntegerMax;
+    return middleDayOfWeek;
+}
+
+- (NSInteger)fs_numberOfDaysInMonth:(NSDate *)month
+{
+    if (!month) return 0;
+    NSRange days = [self rangeOfUnit:NSCalendarUnitDay
+                                        inUnit:NSCalendarUnitMonth
+                                       forDate:month];
+    return days.length;
+}
+
+- (NSDateComponents *)fs_privateComponents
+{
+    NSDateComponents *components = objc_getAssociatedObject(self, _cmd);
+    if (!components) {
+        components = [[NSDateComponents alloc] init];
+        objc_setAssociatedObject(self, _cmd, components, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return components;
+}
+
+@end
 
 @implementation NSObject (FSCalendarExtensions)
 
@@ -149,7 +233,6 @@
     if (!invocation) return nil;
     invocation.target = self;
     invocation.selector = selector;
-    
     // Parameters
     if (firstObject) {
         int index = 2;
@@ -168,8 +251,8 @@
                         // struct
 #define PARAM_STRUCT_TYPES(_type,_getter,_default) \
 if (!strcmp(argType, @encode(_type))) { \
-_type value = [obj respondsToSelector:@selector(_getter)]?[obj _getter]:_default; \
-[invocation setArgument:&value atIndex:index++]; \
+    _type value = [obj respondsToSelector:@selector(_getter)]?[obj _getter]:_default; \
+    [invocation setArgument:&value atIndex:index]; \
 }
                         PARAM_STRUCT_TYPES(CGPoint, CGPointValue, CGPointZero)
                         PARAM_STRUCT_TYPES(CGSize, CGSizeValue, CGSizeZero)
@@ -180,13 +263,15 @@ _type value = [obj respondsToSelector:@selector(_getter)]?[obj _getter]:_default
                         PARAM_STRUCT_TYPES(UIEdgeInsets, UIEdgeInsetsValue, UIEdgeInsetsZero)
                         PARAM_STRUCT_TYPES(UIOffset, UIOffsetValue, UIOffsetZero)
                         PARAM_STRUCT_TYPES(NSRange, rangeValue, NSMakeRange(NSNotFound, 0))
+                        
 #undef PARAM_STRUCT_TYPES
+                        index++;
                     } else {
                         // basic type
 #define PARAM_BASIC_TYPES(_type,_getter) \
 if (!strcmp(argType, @encode(_type))) { \
-_type value = [obj respondsToSelector:@selector(_getter)]?[obj _getter]:0; \
-[invocation setArgument:&value atIndex:index++]; \
+    _type value = [obj respondsToSelector:@selector(_getter)]?[obj _getter]:0; \
+    [invocation setArgument:&value atIndex:index]; \
 }
                         PARAM_BASIC_TYPES(BOOL, boolValue)
                         PARAM_BASIC_TYPES(int, intValue)
@@ -199,7 +284,9 @@ _type value = [obj respondsToSelector:@selector(_getter)]?[obj _getter]:0; \
                         PARAM_BASIC_TYPES(unsigned long long, unsignedLongLongValue)
                         PARAM_BASIC_TYPES(float, floatValue)
                         PARAM_BASIC_TYPES(double, doubleValue)
+                        
 #undef PARAM_BASIC_TYPES
+                        index++;
                     }
                 }
             } while((obj = va_arg(args, id)));
@@ -231,9 +318,9 @@ _type value = [obj respondsToSelector:@selector(_getter)]?[obj _getter]:0; \
             // struct
 #define RETURN_STRUCT_TYPES(_type) \
 if (!strcmp(returnType, @encode(_type))) { \
-_type value; \
-[invocation getReturnValue:&value]; \
-returnValue = [NSValue value:&value withObjCType:@encode(_type)]; \
+    _type value; \
+    [invocation getReturnValue:&value]; \
+    returnValue = [NSValue value:&value withObjCType:@encode(_type)]; \
 }
             RETURN_STRUCT_TYPES(CGPoint)
             RETURN_STRUCT_TYPES(CGSize)
@@ -244,14 +331,15 @@ returnValue = [NSValue value:&value withObjCType:@encode(_type)]; \
             RETURN_STRUCT_TYPES(UIEdgeInsets)
             RETURN_STRUCT_TYPES(UIOffset)
             RETURN_STRUCT_TYPES(NSRange)
+            
 #undef RETURN_STRUCT_TYPES
         } else {
             // basic
             void *buffer = (void *)malloc(length);
             [invocation getReturnValue:buffer];
 #define RETURN_BASIC_TYPES(_type) \
-if (!strcmp(returnType, @encode(_type))) { \
-returnValue = @(*((_type*)buffer)); \
+    if (!strcmp(returnType, @encode(_type))) { \
+    returnValue = @(*((_type*)buffer)); \
 }
             RETURN_BASIC_TYPES(BOOL)
             RETURN_BASIC_TYPES(int)
@@ -264,6 +352,7 @@ returnValue = @(*((_type*)buffer)); \
             RETURN_BASIC_TYPES(unsigned long long)
             RETURN_BASIC_TYPES(float)
             RETURN_BASIC_TYPES(double)
+            
 #undef RETURN_BASIC_TYPES
         }
     }
