@@ -229,6 +229,8 @@ typedef NS_OPTIONS(NSUInteger, FSCalendarSeparators) {
  */
 @property (assign, nonatomic) BOOL adjustsFontSizeToFitContentSize;
 
+@property (assign, nonatomic) CGFloat diameterRatio;
+
 #if TARGET_INTERFACE_BUILDER
 
 // For preview only

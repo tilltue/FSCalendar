@@ -68,6 +68,8 @@
     self = [super init];
     if (self) {
         
+        _diameterRatio = 0.6;
+        
         _adjustsFontSizeToFitContentSize = YES;
         
         _titleFontSize = _preferredTitleFontSize  = FSCalendarStandardTitleTextSize;
