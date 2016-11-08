@@ -7,9 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "FSCalendar.h"
 
-@class FSCalendarEventIndicator;
+@class FSCalendar, FSCalendarAppearance, FSCalendarEventIndicator;
+
 @interface FSCalendarCell : UICollectionViewCell
 
 @property (weak, nonatomic) FSCalendar *calendar;
@@ -28,11 +28,9 @@
 @property (strong, nonatomic) NSString *subtitle;
 @property (strong, nonatomic) UIImage  *image;
 
-@property (assign, nonatomic) BOOL needsAdjustingViewFrame;
 @property (assign, nonatomic) NSInteger numberOfEvents;
 
-@property (assign, nonatomic) BOOL dateIsPlaceholder;
-@property (assign, nonatomic) BOOL dateIsSelected;
+@property (assign, nonatomic,getter=isPlaceholder) BOOL placeholder;
 @property (assign, nonatomic) BOOL dateIsToday;
 
 @property (readonly, nonatomic) BOOL weekend;
@@ -53,6 +51,14 @@
 @property (strong, nonatomic) NSArray<UIColor *> *preferredEventDefaultColors;
 @property (strong, nonatomic) NSArray<UIColor *> *preferredEventSelectionColors;
 @property (assign, nonatomic) CGFloat preferredBorderRadius;
+
+// Add subviews to self.contentView and set up constraints
+- (instancetype)initWithFrame:(CGRect)frame NS_REQUIRES_SUPER;
+- (instancetype)initWithCoder:(NSCoder *)aDecoder NS_REQUIRES_SUPER;
+
+// For div overridden
+- (void)layoutSubviews NS_REQUIRES_SUPER; // Configure view frames
+- (void)configureSubviews NS_REQUIRES_SUPER; // Configure for selected/unselected state
 
 - (void)invalidateTitleFont;
 - (void)invalidateSubtitleFont;
@@ -76,7 +82,6 @@
 
 @property (assign, nonatomic) NSInteger numberOfEvents;
 @property (strong, nonatomic) id color;
-@property (assign, nonatomic) BOOL needsAdjustingViewFrame;
 
 @end
 

@@ -13,21 +13,23 @@
 
 #import "FSCalendar.h"
 #import "FSCalendarCell.h"
-#import "FSCalendarHeader.h"
+#import "FSCalendarHeaderView.h"
 #import "FSCalendarStickyHeader.h"
 #import "FSCalendarCollectionView.h"
 #import "FSCalendarCollectionViewLayout.h"
 #import "FSCalendarScopeHandle.h"
+#import "FSCalendarCalculator.h"
 #import "FSCalendarAnimator.h"
+#import "FSCalendarDelegateProxy.h"
 
 @interface FSCalendar (Dynamic)
 
-@property (readonly, nonatomic) NSExtensionContext *extensionContext;
-@property (readonly, nonatomic) FSCalendarHeader *header;
 @property (readonly, nonatomic) FSCalendarCollectionView *collectionView;
 @property (readonly, nonatomic) FSCalendarScopeHandle *scopeHandle;
 @property (readonly, nonatomic) FSCalendarCollectionViewLayout *collectionViewLayout;
 @property (readonly, nonatomic) FSCalendarAnimator *animator;
+@property (readonly, nonatomic) FSCalendarCalculator *calculator;
+@property (readonly, nonatomic) FSCalendarDelegateProxy *proxy;
 @property (readonly, nonatomic) NSArray<UILabel *> *weekdays;
 @property (readonly, nonatomic) BOOL floatingMode;
 @property (readonly, nonatomic) NSArray *visibleStickyHeaders;
@@ -49,7 +51,6 @@
 
 - (void)invalidateWeekdayFont;
 - (void)invalidateWeekdayTextColor;
-- (void)invalidateWeekdayBackground;
 
 - (void)invalidateHeaders;
 - (void)invalidateWeekdaySymbols;
@@ -57,13 +58,6 @@
 
 - (BOOL)isPageInRange:(NSDate *)page;
 - (BOOL)isDateInRange:(NSDate *)date;
-- (NSDate *)dateForIndexPath:(NSIndexPath *)indexPath;
-- (NSDate *)dateForIndexPath:(NSIndexPath *)indexPath scope:(FSCalendarScope)scope;
-- (NSIndexPath *)indexPathForDate:(NSDate *)date;
-- (NSIndexPath *)indexPathForDate:(NSDate *)date scope:(FSCalendarScope)scope;
-
-- (NSInteger)numberOfHeadPlaceholdersForMonth:(NSDate *)month;
-- (NSInteger)numberOfRowsInMonth:(NSDate *)month;
 
 - (CGSize)sizeThatFits:(CGSize)size scope:(FSCalendarScope)scope;
 
@@ -87,3 +81,4 @@
 - (void)invalidateFonts;
 
 @end
+

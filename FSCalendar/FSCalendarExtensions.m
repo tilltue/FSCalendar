@@ -222,7 +222,40 @@
 
 @end
 
+@implementation NSCache (FSCalendarExtensions)
+
+- (void)setObject:(nullable id)obj forKeyedSubscript:(id<NSCopying>)key
+{
+    if (!key) return;
+    
+    if (obj) {
+        [self setObject:obj forKey:key];
+    } else {
+        [self removeObjectForKey:key];
+    }
+}
+
+- (id)objectForKeyedSubscript:(id<NSCopying>)key
+{
+    return [self objectForKey:key];
+}
+
+@end
+
 @implementation NSObject (FSCalendarExtensions)
+
+- (void)fs_setVariable:(id)variable forKey:(NSString *)key
+{
+    Ivar ivar = class_getInstanceVariable(self.class, key.UTF8String);
+    object_setIvar(self, ivar, variable);
+}
+
+- (id)fs_variableForKey:(NSString *)key
+{
+    Ivar ivar = class_getInstanceVariable(self.class, key.UTF8String);
+    id variable = object_getIvar(self, ivar);
+    return variable;
+}
 
 - (id)fs_performSelector:(SEL)selector withObjects:(nullable id)firstObject, ...
 {
@@ -233,6 +266,7 @@
     if (!invocation) return nil;
     invocation.target = self;
     invocation.selector = selector;
+    
     // Parameters
     if (firstObject) {
         int index = 2;

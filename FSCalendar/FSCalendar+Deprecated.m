@@ -7,6 +7,7 @@
 //
 
 #import "FSCalendar.h"
+#import "FSCalendarExtensions.h"
 #import "FSCalendarDynamicHeader.h"
 
 #pragma mark - Deprecate
@@ -109,30 +110,6 @@
     if (!date) return NSNotFound;
     NSDateComponents *component = [self.gregorian components:NSCalendarUnitWeekOfYear fromDate:date];
     return component.weekOfYear;
-}
-
-- (NSInteger)hourOfDate:(NSDate *)date
-{
-    if (!date) return NSNotFound;
-    NSDateComponents *component = [self.gregorian components:NSCalendarUnitHour
-                                                   fromDate:date];
-    return component.hour;
-}
-
-- (NSInteger)miniuteOfDate:(NSDate *)date
-{
-    if (!date) return NSNotFound;
-    NSDateComponents *component = [self.gregorian components:NSCalendarUnitMinute
-                                                   fromDate:date];
-    return component.minute;
-}
-
-- (NSInteger)secondOfDate:(NSDate *)date
-{
-    if (!date) return NSNotFound;
-    NSDateComponents *component = [self.gregorian components:NSCalendarUnitSecond
-                                                   fromDate:date];
-    return component.second;
 }
 
 - (NSDate *)dateByIgnoringTimeComponentsOfDate:(NSDate *)date
@@ -290,5 +267,24 @@
     return [self isDate:date equalToDate:[NSDate date] toCalendarUnit:FSCalendarUnitDay];
 }
 
+- (void)setIdentifier:(NSString *)identifier
+{
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:identifier];
+    [self setValue:gregorian forKey:@"gregorian"];
+    [self fs_performSelector:NSSelectorFromString(@"invalidateDateTools") withObjects:nil, nil];
+    [self fs_performSelector:NSSelectorFromString(@"invalidateWeekdaySymbols") withObjects:nil, nil];
+    
+    if ([[self valueForKey:@"hasValidateVisibleLayout"] boolValue]) {
+        [self reloadData];
+    }
+    [self fs_setVariable:[self.gregorian dateBySettingHour:0 minute:0 second:0 ofDate:self.minimumDate options:0] forKey:@"_minimumDate"];
+    [self fs_setVariable:[self.gregorian dateBySettingHour:0 minute:0 second:0 ofDate:self.currentPage options:0] forKey:@"_currentPage"];
+    [self fs_performSelector:NSSelectorFromString(@"scrollToPageForDate:animated") withObjects:self.today, @NO, nil];
+}
+
+- (NSString *)identifier
+{
+    return self.gregorian.calendarIdentifier;
+}
 
 @end

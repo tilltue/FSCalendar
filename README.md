@@ -20,14 +20,12 @@
 * [Support](#support)
 * [Contact](#contact)
 
-[**QQ交流群: 323861692**](#qq_group)
+## <a id="screenshots"></a>Screenshots
 
-# <a id="screenshots"></a>Screenshots
-
-## iPhone
+![fscalendar-users](https://cloud.githubusercontent.com/assets/5186464/19956154/dd0f6bb4-a1c3-11e6-8fed-6aabbf999161.jpg)
+------
 ![fscalendar](https://cloud.githubusercontent.com/assets/5186464/10262249/4fabae40-69f2-11e5-97ab-afbacd0a3da2.jpg)
-
-## iPad
+------
 ![fscalendar-ipad](https://cloud.githubusercontent.com/assets/5186464/10927681/d2448cb6-82dc-11e5-9d11-f664a06698a7.jpg)
 
 ## Working with AutoLayout and Orientation
@@ -36,21 +34,19 @@
 ## Hide placeholder dates
 ![fscalendar-showsplaceholder](https://cloud.githubusercontent.com/assets/5186464/13727902/21a90042-e940-11e5-9b9f-392f38cf007d.gif)
 
-## Scope gesture
-![scopegesture](https://cloud.githubusercontent.com/assets/5186464/16909556/276fa8a8-4d06-11e6-8092-587952edb395.gif)
-
 > FSCalendar doesn't change frame or the constraint by itself, see [Adjusts frame dynamicly](#adjusts_frame_dynamicly)
 
 <br>
 
 ## Today Extension (iOS8/9)
-![1](https://cloud.githubusercontent.com/assets/5186464/18406879/0d072d92-7736-11e6-90bc-2633f5ca2b54.gif)
-<br>
-![2](https://cloud.githubusercontent.com/assets/5186464/18406887/47c4822c-7736-11e6-96f0-ccb4c9cba199.gif)
+![1](https://cloud.githubusercontent.com/assets/5186464/18406887/47c4822c-7736-11e6-96f0-ccb4c9cba199.gif)
 
 ## Today Extension With NCWidgetDisplayMode (iOS10)
 ![2](https://cloud.githubusercontent.com/assets/5186464/18870531/9afa7cd4-84e3-11e6-93c6-4e8811fd71a7.gif)
 
+## DIV support
+|  ![1](https://cloud.githubusercontent.com/assets/5186464/20026983/22354a0e-a342-11e6-8ae6-0614ea7f35ae.gif)    |
+| -------------  |
 
 
 # <a id="installation"></a>Installation
@@ -135,7 +131,7 @@ view.addSubview(calendar)
 self.calendar = calendar
 ```
 
-> **FSCalendar** is fully compatible for Swift3, see `SwiftExample` for more details.
+> To use **FSCalendar** in Swift3, see `Example-Swift` for details.
 
 <br/>
 
@@ -294,9 +290,4 @@ BOOL inSameUnit = [self.gregorian isDate:date1 equalToDate:date2 toUnitGranulari
 # License
 FSCalendar is available under the MIT license. See the LICENSE file for more info.
 
-# [中文说明](http://www.jianshu.com/notebooks/4276521/latest)
-<br><br>
-
-
-
-
+###[Documentation](http://cocoadocs.org/docsets/FSCalendar/) | [More Usage](https://github.com/WenchaoD/FSCalendar/blob/master/MOREUSAGE.md) | [简书](http://www.jianshu.com/notebooks/4276521/latest)

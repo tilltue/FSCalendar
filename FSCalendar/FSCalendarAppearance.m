@@ -207,7 +207,6 @@
 {
     if (!CGPointEqualToPoint(_titleOffset, titleOffset)) {
         _titleOffset = titleOffset;
-        [_calendar.collectionView.visibleCells setValue:@YES forKey:@"needsAdjustingViewFrame"];
         [_calendar.collectionView.visibleCells makeObjectsPerformSelector:@selector(setNeedsLayout)];
     }
 }
@@ -216,7 +215,6 @@
 {
     if (!CGPointEqualToPoint(_subtitleOffset, subtitleOffset)) {
         _subtitleOffset = subtitleOffset;
-        [_calendar.collectionView.visibleCells setValue:@YES forKey:@"needsAdjustingViewFrame"];
         [_calendar.collectionView.visibleCells makeObjectsPerformSelector:@selector(setNeedsLayout)];
     }
 }
@@ -225,7 +223,6 @@
 {
     if (!CGPointEqualToPoint(_imageOffset, imageOffset)) {
         _imageOffset = imageOffset;
-        [_calendar.collectionView.visibleCells setValue:@YES forKey:@"needsAdjustingViewFrame"];
         [_calendar.collectionView.visibleCells makeObjectsPerformSelector:@selector(setNeedsLayout)];
     }
 }
@@ -234,7 +231,6 @@
 {
     if (!CGPointEqualToPoint(_eventOffset, eventOffset)) {
         _eventOffset = eventOffset;
-        [_calendar.collectionView.visibleCells setValue:@YES forKey:@"needsAdjustingViewFrame"];
         [_calendar.collectionView.visibleCells makeObjectsPerformSelector:@selector(setNeedsLayout)];
     }
 }
@@ -495,17 +491,6 @@
     }
 }
 
-- (void)setWeekdayBackground:(id)weekdayBackground
-{
-    if (weekdayBackground && (![weekdayBackground isKindOfClass:[UIImage class]] && ![weekdayBackground isKindOfClass:[UIColor class]])) {
-        [NSException raise:@"Invalidate Argument" format:@"The weekday background could only be a UIImage or UIColor instance"];
-    }
-    if (![_weekdayBackground isEqual:weekdayBackground]) {
-        _weekdayBackground = weekdayBackground;
-        [self invalidateWeekdayBackground];
-    }
-}
-
 - (void)setHeaderTitleColor:(UIColor *)color
 {
     if (![_headerTitleColor isEqual:color]) {
@@ -518,7 +503,7 @@
 {
     if (_headerMinimumDissolvedAlpha != headerMinimumDissolvedAlpha) {
         _headerMinimumDissolvedAlpha = headerMinimumDissolvedAlpha;
-        [_calendar.header.collectionView.visibleCells makeObjectsPerformSelector:@selector(setNeedsLayout)];
+        [_calendar.calendarHeaderView.collectionView.visibleCells makeObjectsPerformSelector:@selector(setNeedsLayout)];
         [_calendar.visibleStickyHeaders makeObjectsPerformSelector:@selector(setNeedsLayout)];
     }
 }
@@ -657,11 +642,13 @@
 - (void)invalidateTitleFont
 {
     [_calendar.collectionView.visibleCells makeObjectsPerformSelector:_cmd];
+    _calendar.calculator.titleHeight = -1;
 }
 
 - (void)invalidateSubtitleFont
 {
     [_calendar.collectionView.visibleCells makeObjectsPerformSelector:_cmd];
+    _calendar.calculator.subtitleHeight = -1;
 }
 
 - (void)invalidateTitleTextColor
@@ -686,21 +673,15 @@
     [_calendar.visibleStickyHeaders makeObjectsPerformSelector:_cmd];
 }
 
-- (void)invalidateWeekdayBackground
-{
-    [_calendar invalidateWeekdayBackground];
-    [_calendar.visibleStickyHeaders makeObjectsPerformSelector:_cmd];
-}
-
 - (void)invalidateHeaderFont
 {
-    [_calendar.header.collectionView.visibleCells makeObjectsPerformSelector:_cmd];
+    [_calendar.calendarHeaderView.collectionView.visibleCells makeObjectsPerformSelector:_cmd];
     [_calendar.visibleStickyHeaders makeObjectsPerformSelector:_cmd];
 }
 
 - (void)invalidateHeaderTextColor
 {
-    [_calendar.header.collectionView.visibleCells makeObjectsPerformSelector:_cmd];
+    [_calendar.calendarHeaderView.collectionView.visibleCells makeObjectsPerformSelector:_cmd];
     [_calendar.visibleStickyHeaders makeObjectsPerformSelector:_cmd];
 }
 
