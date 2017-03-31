@@ -1107,7 +1107,7 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
     _lineHeightMultiplier = MAX(0, lineHeightMultiplier);
 }
 
-- (void)selectDate:(NSDate *)date
+- (void)selectFocusDate:(NSDate *)date
 {
     [self selectDate:date scrollToDate:YES];
 }

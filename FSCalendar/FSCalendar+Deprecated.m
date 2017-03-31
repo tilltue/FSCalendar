@@ -48,7 +48,7 @@
 
 - (void)setSelectedDate:(NSDate *)selectedDate
 {
-    [self selectDate:selectedDate];
+    [self selectFocusDate:selectedDate];
 }
 
 - (void)setSelectedDate:(NSDate *)selectedDate animate:(BOOL)animate

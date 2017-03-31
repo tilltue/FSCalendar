@@ -432,7 +432,7 @@ IB_DESIGNABLE
  
  @param date A date in the calendar.
  */
-- (void)selectDate:(NSDate *)date;
+- (void)selectFocusDate:(NSDate *)date;
 
 /**
  Selects a given date in the calendar, optionally scrolling the date to visible area.
