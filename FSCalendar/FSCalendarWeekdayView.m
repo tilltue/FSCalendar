@@ -80,6 +80,7 @@
         NSInteger labelIndex = opposite ? count-1-i : i;
         UILabel *label = [self.weekdayPointers pointerAtIndex:labelIndex];
         label.frame = CGRectMake(x, 0, width, self.contentView.fs_height);
+        label.textColor = self.weekdaycolors[labelIndex];
         x = CGRectGetMaxX(label.frame);
     }
     free(widths);

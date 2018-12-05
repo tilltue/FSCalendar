@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
  An array of UILabel objects displaying the weekday symbols.
  */
 @property (readonly, nonatomic) NSArray<UILabel *> *weekdayLabels;
+@property (strong, nonatomic) NSArray<UIColor *> *weekdaycolors;
 
 - (void)configureAppearance;
 
