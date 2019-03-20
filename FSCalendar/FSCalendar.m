@@ -290,8 +290,10 @@ typedef NS_ENUM(NSUInteger, FSCalendarOrientation) {
         if (CGSizeEqualToSize(_transitionCoordinator.cachedMonthSize, CGSizeZero)) {
             _transitionCoordinator.cachedMonthSize = self.frame.size;
         }
-        
+        NSLog(@"%f, %f, %f, %f",self.bounds.origin.x,self.bounds.origin.y,self.bounds.size.width,self.bounds.size.height);
         _contentView.frame = self.bounds;
+        self.backgroundColor = [UIColor redColor];
+        _contentView.backgroundColor = [UIColor yellowColor];
         CGFloat headerHeight = self.preferredHeaderHeight;
         CGFloat weekdayHeight = self.preferredWeekdayHeight;
         CGFloat rowHeight = self.preferredRowHeight;
